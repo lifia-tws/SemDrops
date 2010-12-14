@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<overlay id="modifyheaders-profiles-overlay"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    <prefpane id="pane1" label="Semantic Turkey Annotation Options">
+    <label value='Selected Annotation Type' class="head-1"/>
+    <hbox id="default_ann_box">
+  <!-- <button id="changeDefaultAnn" label="Change Selected Annotation Type" onclick="changeDefaultAnnotation();"/>-->
+   </hbox>
+   <separator orient="orizontal" class="groove"/>
+    <box>
+    <label value='Annotation Options' class="title"/>
+   </box>
+   <listbox id="annotationOptions">
+   </listbox>
+   </prefpane>
+  <prefpane id="pane2" label="Semantic Turkey Languages Options">
+     <label value='Default Language' class="head-1"/>
+   <hbox id="default_language_box">
+   <button id="changeDefault" label="Change Default Language" onclick="changeDefaultLanguage();"/>
+   </hbox>
+   <separator orient="orizontal" class="groove"/>
+   <box>
+   <label value='Available Languages list' class="title"/>
+   <toolbarbutton label="+" onclick="addLanguage();"/>
+    <toolbarbutton label="-" onclick="removeLanguage();"/>
+   </box>
+   <listbox id="languagesOption" rows="5">
+	</listbox>
+ </prefpane>
+</overlay>
+
