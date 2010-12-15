@@ -1,0 +1,11 @@
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:r="urn:local#">
+        <Seq about="urn:pepe">
+            <li>
+              <Description r:q="some value"/>
+            </li>
+            <li>
+              <Description r:q="some other value"/>
+            </li>
+        </Seq>
+    </RDF> 
