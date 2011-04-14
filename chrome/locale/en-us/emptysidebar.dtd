@@ -1,0 +1,14 @@
+<!ENTITY user.name "User: ">
+<!ENTITY tag.tittle "Personal annotation">
+<!ENTITY tag.category "Category">
+<!ENTITY tag.link "Links">
+<!ENTITY tag.attributes "Attributes">
+<!ENTITY tag.button.add "Add Item">
+<!ENTITY tag.button.del "Delete Item">
+<!ENTITY tag.button.cha "Change Item">
+<!ENTITY tag.button.nav "Navigate">
+<!ENTITY tag.button.pub "Publish Item">
+<!ENTITY cat.add.value "Insert the Name of tag: ">
+<!ENTITY cat.mod.value "Insert the New Name of tag: ">
+<!ENTITY mod.add.name "Name: ">
+<!ENTITY mod.mod.value "Value: ">

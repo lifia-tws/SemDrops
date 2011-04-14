@@ -1,0 +1,11 @@
+content emptysidebar chrome/content/
+
+overlay chrome://browser/content/browser.xul chrome://emptysidebar/content/firefoxOverlay.xul
+
+locale  emptysidebar en-US chrome/locale/en-us/
+locale  emptysidebar en chrome/locale/en-us/
+locale  emptysidebar es-AR chrome/locale/es-ar/
+locale  emptysidebar es chrome/locale/es-ar/
+locale  emptysidebar fr chrome/locale/fr-fra/
+locale  emptysidebar fr-FRA chrome/locale/fr-fra/
+

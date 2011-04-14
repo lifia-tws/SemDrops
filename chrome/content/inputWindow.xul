@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type"text/css" ?>
+
+<!DOCTYPE window SYSTEM "chrome://emptysidebar/locale/emptysidebar.dtd">
+
+<page id="sbEmptySidebar" title="SemDrops"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
+	onload="onSecondaryLoad()">
+	
+	<script src="l.js"/>
+		
+<vbox align="left">
+   <hbox align="center">
+   	<label style="width:10em" value="&mod.add.name;" />
+   	<textbox id="inputfield" oninput="setText('default')" />
+   </hbox>
+   
+   <hbox align="end"> 
+   		<label style="width:14em" value=" " />
+   		<button flex="1" image = "SistemImages/invert.png" oncommand="changeValues()" />
+   </hbox>
+   
+   <hbox align="center">
+   	<label style="width:10em" value="&mod.mod.value;"/>
+   	<textbox id="inputfield2" oninput="setText('default')" />
+   </hbox>
+</vbox>
+
+   <hbox>
+    <button flex="0.5" label="Acept"  image = "SistemImages/accept.png" oncommand="acept()" />
+    <button flex="0.5" label="Cancel" image = "SistemImages/noshare.png" oncommand="cancel()" />
+   </hbox>
+	
+</page>
