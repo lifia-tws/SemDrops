@@ -1,42 +1,32 @@
-/*
- * It gives functionality  -drag&drop feature- to the plugin.
- */
-
-const clase =
-{
-	getSupportedFlavours : function () 
-			{
-	    			var flavours = new FlavourSet();
-			        flavours.appendFlavour("text/unicode");
-			        return flavours;
-			},
-
-	onDrop : function (event)
+const DragandDropManager =
+{	
+	ondrop : function (event)
 	{
-		var yval = event.clientY;
-		
-		var cat = core.getcategory();
-		var lin = core.getlinks();
-		var att = core.getattributes();
-		
-		if (yval >= 60 && yval <= lin.position())
-		{ 
-			var fin = cat;
-			core.setselected(cat.label());
-			lin.incrementYval();
-			att.incrementYval();
+		if (event.screenX > 50 && event.screenX < 470)
+		{	
+			var yval = event.screenY;
+			
+			var cat = core.getcategory();
+			var lin = core.getlinks();
+			var att = core.getattributes();
+			if (yval >= cat.position() && yval <= lin.position())
+			{ 
+				core.setselected(cat.label());
+				lin.incrementYval();
+				att.incrementYval();
+				cat.add(core,event.dataTransfer.getData("text/plain"),"Attribute");
+			}
+			if (yval >= lin.position() && yval <= att.position())
+			{
+				core.setselected(lin.label());
+				att.incrementYval();
+				lin.add(core,"Value",event.dataTransfer.getData("text/plain"));
+			}
+			if (yval >= att.position())
+			{
+				core.setselected(att.label());
+				att.add(core,"Value",event.dataTransfer.getData("text/plain"));
+			}
 		}
-		if (yval >= lin.position() && yval <= att.position())
-		{
-			var fin = lin;
-			core.setselected(lin.label());
-			att.incrementYval();
-		}
-		if (yval >= att.position())
-		{
-			var fin = att;
-			core.setselected(att.label());
-		}
-		fin.add(core,event.dataTransfer.getData("text/plain"),"attribute");
-	}
-}
+	},	
+};

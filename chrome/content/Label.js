@@ -14,9 +14,9 @@ function Label()
 									var fin = document.getElementById(sel.getAttribute('idCont'));
 									
 									/*
-									 * This function stores in disk the first element.
-									 * Currently, wiki-storage is being used for this work and
-									 * for that reason this line remains commented.
+									 * esta funcion almacena el primer elemento en disco.
+									 * por el momento se esta trabajando con wiki-storage.
+									 * con lo cual esta linea se mantiene comentada									 * 
 									 */
 									//core.loadInDisk(value,sel);
 									core.loadInWiki(value," ",sel);
@@ -57,14 +57,15 @@ function Label()
 									var sel = core.selected();
 									fin.removeChild(item);
 									var attribute = son.deleteSecondAttribute();
-									core.deleteFile(sel.getAttribute('wikidelobject'),attribute);
+									core.deleteFile(sel.getAttribute('wikidelobject'),attribute,sel);
 									CANT--;
 								}
 								
 	this.modificar = function (core,son,nuevoValor,secondValue,nuevoNodo,valorAborrar,attributoAborrar)
 								{
-									 	nuevoNodo.setAttribute('label',nuevoValor);
-										core.modifiFile(valorAborrar,nuevoValor,secondValue,attributoAborrar);
+									var sel = core.selected();
+									nuevoNodo.setAttribute('label',nuevoValor);
+									core.modifiFile(valorAborrar,nuevoValor,secondValue,attributoAborrar,sel);
 								}
 	
 	this.loadNode = function (fin,value,tag,file,son,cont)

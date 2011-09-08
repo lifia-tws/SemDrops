@@ -1,7 +1,3 @@
-/*
-*	Functions related to the tag. Attributes.
-**/
-
 function Attributes ()
 {
 	this.selff;
@@ -15,7 +11,7 @@ function Attributes ()
 									this.selff = document.getElementById('3');
 									this._label = document.getElementById('att');
 									this.father = new Label();
-									this._position = 100;
+									this._position = 291;
 								}	
 	
 	this.add = function(core,val1,val2)
@@ -54,8 +50,7 @@ function Attributes ()
 											var padre = sel.parentNode;
 											var bro = padre.childNodes[1];
 											var delword = bro.getAttribute("wikidelobject");
-											delword += 'º';
-											core.deleteFile(delword);
+											return delword;
 										}					  
 						  
 	this.addSecondAttribute = function (row,value2,core)
@@ -117,6 +112,11 @@ function Attributes ()
 								cell2.setAttribute('label',word);
 								treerow.appendChild(cell2);
 								return cont;
+							}
+	
+	this.selFather = function (core)
+							{
+								alert(document.getElementById("mess.error.value").label);	
 							}
 													
 }

@@ -8,7 +8,7 @@
   
   <keyset id="mainKeyset">
     <key id="key_openEmptySidebar" command="viewEmptySidebar"
-         key="E" 
+         key="S" 
          modifiers="shift accel" />
   </keyset>
   

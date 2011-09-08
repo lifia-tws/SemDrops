@@ -1,7 +1,3 @@
-/**
- * Functions related to the Category tag.
- */
-
 function Category ()
 {
 	this.selff;
@@ -14,7 +10,7 @@ function Category ()
 									this.selff = document.getElementById('1');
 									this._label = document.getElementById('cat');
 									this.father = new Label();
-									this._position = 60;
+									this._position = 250;
 								}
 	
 	this.add = function(core,val1,val2)
@@ -100,5 +96,11 @@ function Category ()
 	this.loadAttributeNode = function (treerow, file,cont)
 							{
 								return cont;
+							}
+	
+	this.selFather = function (core)
+							{
+								fatherwin.initialize();
+								document.TEXT_NODE = fatherwin;
 							}
 }

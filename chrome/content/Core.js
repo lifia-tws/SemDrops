@@ -1,16 +1,18 @@
 /**
- * The core is in charge of centralizing the plugin objects. Its aim is to be the
- * mediator between the different elements of the plugin. Each element goes through
- * the core before gaining acces to any other element. 
+ * EL nucleo es el encargado de centralizar todos los "objetos" del plugin
+ * la idea del nucleo es poder ser el mediador entre los distintos elementos que 
+ * componen el plugin, nada puede acceder a otra cosa sin pasar primero por el 
+ * nucleo.
  * 
  * @param {Referencia a DisckStorageManager} _localStorage
  * @param {Referencia a Browser} _browserInterface
  * @param {Referencia a WikiStorageManager} _remoteStorage
  */
 
-/** The crosspage will take the value of the page where we will search the semantic data of another semantic wiki. */
+/** crosspage tomara el valor de la pagina donde nosotros iremos a buscar los datos semanticos de otra wikisemantica*/
 var browser;
 var crossCant;
+var _labelId;
 
 function Core(_localStorage,_browserInterface,_remoteStorage,_awarenes)
 {
@@ -25,11 +27,13 @@ function Core(_localStorage,_browserInterface,_remoteStorage,_awarenes)
 	this._remoteStorage;
 	this._awarenes;
 	this._timer;
+	this._treeitem;
+	this._wikicurrentreader;
 	
 /**
- * ”Initialize” is the first function executed at the object level. Its main goal is to initialize all
- * the variables of the core object. Once they are initialized, the upload of the uploaded elements in
- * the users´ wikis begins by means of the readWikiUserData()" y "loadWikiData()" functions.
+ *  EL "initialize" es la primera funcion que se ejecuta a nivel de objetos, su objetivo principal es poder inizializar
+ *  todas las variables del objeto CORE, una vez inicializadas procede a la carga de los elementos cargados en las 
+ *  wikis de los usuarios gracias a las dos funciones "readWikiUserData()" y "loadWikiData()".
  */	
 	this.initialize = function (c,a,l,_tagmenu,_valuemenu)
 									{
@@ -46,15 +50,16 @@ function Core(_localStorage,_browserInterface,_remoteStorage,_awarenes)
 										_labels[1] = c;
 										_labels[2] = l;
 										_labels[3] = a;
-										_timer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
 										_menu = new Array(2);
 										_menu[0] = _tagmenu;	
 										_menu[1] = _valuemenu;
 										_confgwind = new ConfigureWindow();
+										_wikicurrentreader = new CurrentWikiReader();
 										_remoteStorage.initialize(_browserInterface);
 										_remoteStorage.readUserData();
 										_awarenes.initialize();
 										_remoteStorage.setAwarenes(_awarenes);
+										_wikicurrentreader.loadWikiData(_browserInterface);
 									}
 									
 	this.increment = function ()
@@ -62,32 +67,32 @@ function Core(_localStorage,_browserInterface,_remoteStorage,_awarenes)
 									_cant++;
 								}
 	/**
-	 *  ”selected” returns the selected element to the semdrop interface level. These elements may be
-	 *  a tag (category, link, attribute) or one of its respective values.
+	 *  "selected" retorna el elemento seleccionado a nivel de interfaz del semdrop, estos elementos pueden ser
+	 *  un tag (categoria, link, atributo), o uno de sus respectivos valores.
 	 */
 	this.selected = function () 
 								{
 									return(_selected);
 								}	
 	/**
-	 * ”setselectes()” sets a new element when the mouse selects a tag or its respective value in the
-	 * interface of the semdrop.
+	 * "setselected()" setea un nuevo elemento en el momento en que el mouse selecciona un tag o su respectivo
+	 * valor en la interfaz de semdrop. 
 	*/
 	this.setselected = function (sel)							
 								{
 									_selected = sel;
 								}
 	/**
-	 * "agregar" works as a mediator between the interface and the object LABEL. Any tag to be added
-         * to the semdrops will go first through the core, which will send it to its respective label.
+	 * "agregar" funciona como intermedio entre la interfaz y el objeto LABEL, cualquier tag que se quiera agregar al 
+	 * semdrop pasara primero por el core quien lo deriba a su respectivo label.
 	 */
 	this.agregar = function ()	
 								{	
 									var i = _selected.getAttribute('idCont');
-									_labels[i].add(this,"Value" + CANTVAL,"Attribute");
+									_labels[i].add(this,"Value","Attribute");
 								}
 	/**
-	 * The same as for “agregar” just that it deletes.
+	 * Idem agregar solo que borra.
 	 */							
 	this.borrar = function ()	
 								{	
@@ -99,7 +104,7 @@ function Core(_localStorage,_browserInterface,_remoteStorage,_awarenes)
 									_labels[i].del(this,fin,item);
 								}	
 	/**
-	 * The same as for “agregar” just that it modifies.
+	 * Idem agregar solo que modifica.
 	 */							
 	this.modificar = function()
 								{
@@ -110,10 +115,24 @@ function Core(_localStorage,_browserInterface,_remoteStorage,_awarenes)
 									i = fin.getAttribute('id');
 									_labels[i].mod(this);
 								}
+	/**
+	 * La funcion selFather Esta solo disponible para las categorias, entonces solo pregunto si
+	 * este link es una categoria, en caso de serlo disparo la ventana.
+	 */
+	
+	this.selFather = function()
+								{
+									var cell = core.selected();
+									var row = cell.parentNode;
+									var item = row.parentNode;
+									var fin = item.parentNode;
+									i = fin.getAttribute('id');
+									_labels[i].selFather(this);	
+								}
 	
 	/**
-	 * "loadInWiki” is in charge of storing the content of a new tag in the wiki setted by the user as destination.
-	 * It derives the storing to the WIKISTIRAGEMANAGER (_wsm).
+	 * "loadInWiki" se encarga de almacenar el contenido de un nuevo tag dentro de la wiki que el usuario setea como
+	 * destino. para ello deriva el almacenamiento al objeto WIKISTORAGEMANAGER (_wsm)
 	 */							
 	this.loadInWiki = function (value,attribute,tag)
 								{
@@ -121,10 +140,15 @@ function Core(_localStorage,_browserInterface,_remoteStorage,_awarenes)
 								    _remoteStorage.write(value,attribute,i);
 								}
 	
+	this.setRemoteStorage = function (rms)
+								{
+									_remoteStorage = rms;
+								}
 	/**
-	 * When the mouse selects a new tag, the select function is triggered and the new selected element is setted.
+	 * cuando el mouse de la vista selecciona un nuevo tag este dispara la funcion "select", la cual setea el nuevo
+	 * elemento seleccionado.
 	 */						
-	this.select = function (event)
+	this.select = function (event,currentIndex)
 									{
 										var t = event.target.currentIndex;
 										var father = event.target.view.getItemAtIndex(t);
@@ -136,36 +160,36 @@ function Core(_localStorage,_browserInterface,_remoteStorage,_awarenes)
 										_menu[i].menu();
 									}	
 	/**
-	 * Function that delegates the deletion of a selected element from the aplication to the WIKISTORAGEMANAGER.
-	 * This comment is made because in the past the tags were stored locally.
+	 * Funcion que delega al WIKISTORAGEMANAGER el borrado de un elemento seleccionado desde la aplicacion. La linea
+	 * que se encuentra comentada es porque antes los tags se almacenaban de manera local.
 	 */								
-	this.deleteFile = function (word,attribute)
+	this.deleteFile = function (word,attribute,tag)
 									{
-										_remoteStorage.dellete(word,attribute);
+										_remoteStorage.dellete(word,attribute,i);
 									}
 	/**
-	 * The same as for “deletefile” just that it modifies.
+	 * Idem deleteFile pero modificando.
 	 */								
-	this.modifiFile = function (word,newword,secon,oldattri)
+	this.modifiFile = function (word,newword,secon,oldattri,tag)
 									{
-										_remoteStorage.modifi(word,oldattri,newword,secon);
+										_remoteStorage.modifi(word,oldattri,newword,secon,i);
 									}								
 	/**
-	 * It returns the object CATEGORY which corresponds with Category tag data in the application.
+	 * retorna el objeto CATEGORY que se corresponde con los datos del tag Categoria en la aplicacion.
 	 */								
 	this.category = function ()
 									{
 										return (_labels[1].getself());
 									}
 	/**
-	 * The same as for “category”, but for tag link.
+	 * Idem category pero con le tag link.
 	 */								
 	this.links = function ()
 									{
 										return (_labels[2].getself());
 									}
 	/**
-	 * The same as for “category” but for the tag Attributes.
+	 * Idem category pero con le tag attributos.
 	 */									
 	this.attributes = function ()
 									{
@@ -187,9 +211,9 @@ function Core(_localStorage,_browserInterface,_remoteStorage,_awarenes)
 										return (_labels[3]);
 									}								
 	/**
-	 * When the mouse is moved, the application compares whether the page visualized by the 
-	 * semdrop and that visualized by the browser are the same. If the pages do not coincide,
-	 * the semdrop refreshes the new page.
+	 * Cuando se produce un evento de movimiento de mouse la aplicacion compara si la pagina que visualiza el semdrop
+	 * es la misma a la que visualiza el navegador. en caso de no ser asi, el semdrops hace un refresh con la nueva 
+	 * pagina.
 	 */								
 	this.comparar = function ()
 									{
@@ -200,7 +224,7 @@ function Core(_localStorage,_browserInterface,_remoteStorage,_awarenes)
 										}
 									}
 	/**
-	 * It returns the obsolete DISKSTORAGEMANAGER object.
+	 * Retorna el objeto DISKSTORAGEMANAGER el cual se encuentra obsoleto.
 	 */								
 	this.getLocalStorageManager = function ()
 									{
@@ -212,7 +236,8 @@ function Core(_localStorage,_browserInterface,_remoteStorage,_awarenes)
 										_browserInterface.refresPageSelected(event,this);
 									}*/
 	/**
-	 *  ”Share” and “unshare” are obsolete functions whose purpose is to change the icon of the tags whenever they were shared.
+	 *  share y unshare son funciones obsoletas cuyo objetivo es cambiar el icono de los tags cuando pasaban a ser 
+	 *  compartidos.
 	 */
 	/*this.share = function ()
 									{
@@ -224,9 +249,8 @@ function Core(_localStorage,_browserInterface,_remoteStorage,_awarenes)
 										_selected.setAttribute('src',"noshare.png");
 									}*/
 	/**
-	 * When a user shares a tag, the “publish” function is triggered andi t derives the responsibility to the
-	 * WIKISTORAGEMANAGER which, in turn, publishes on the wiki visualized by the browser the value of the 
-	 * element of my tag. 
+	 * Cuando un usuario pone a compartir un tag se dispara la funcion publish, la cual deriba la responsabilidad al 
+	 * WIKISTORAGEMANAGER, quien publica en la wiki visualizada por el browser el valor del elemenento de mi tag.
 	 */								
 	this.publish = function()								
 									{
@@ -239,24 +263,24 @@ function Core(_localStorage,_browserInterface,_remoteStorage,_awarenes)
 										_remoteStorage.publish(this,i);
 									}
 	/**
-	 * It triggers the configuration window by pressing the respective button.
+	 * Dispara la ventana de configuracion una vez precionado el respectivo boton.
 	 */								
 	this.configure = function ()
 									{
 										_confgwind.initialize();
 									}
 	/**
-	 * It stores the selected configuration values in a local file.
+	 * Almacena los valores de la configuracion seleciconada dentro de un archivo local.
 	 */								
 	this.storageconfig = function (name,wiki)
 									{
 										_localStorage.loadInDB(name,wiki);
 									}
 	/**
-	 * This function allows the user to refresh the page with the value of the element in which the option
-	 * was triggered. If it is a semdrops category, it will refresh the page with the value of the category
-	 * but within the user´s local wiki, where all the annotations are stored. If it is a link or an attribute,
-	 * the semdrop will refresh the page in the Wiki visualized by the user.  
+	 *  Esta funcion permite refrescar la pagina con el valor del elento en el cual se disparo la opcion. si es una
+	 *  category semdrops refrescara la pagina con el valor de la categoria pero dentro de la wiki local del usuario
+	 *  donde el tiene almacenado todas las anotaciones, si en cambio es un link o un atributo el semdrop refrescara 
+	 *  la pagina en la misma wiki que el usuario esta visualizando. 
 	 */
 	this.navigate = function ()
 									{

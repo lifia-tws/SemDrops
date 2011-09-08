@@ -14,7 +14,16 @@
       <label style="width:10em" value="Wiki URL: "/>
       <textbox id="inputwiki"/>
    </hbox>
-   <hbox>
+   <hbox align="center">
+      <label style="width:10em" value="Select a store-data manager: "/>
+   </hbox>
+   <menulist id = "pop_up_menu">
+     <menupopup>
+	      <menuitem label="Sesame" selected="true"  />
+	      <menuitem label="Semantic Wiki"  />
+	 </menupopup>
+    </menulist>
+	<hbox>
    		<vbox>
    			<button flex="1" label="Save Changes" tabindex="6" oncommand="save()" />
    		</vbox>

@@ -6,8 +6,9 @@
 <page id="sbEmptySidebar" title="SemDrops"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" onload="onLoad()">
 	
-	<script src="chrome://global/content/nsDragAndDrop.js"/>
-	<script src="chrome://global/content/nsTransferable.js"/>
+	<script src= "jquery.js"/>
+	<script src= "miniwindow.js"/>
+	<script src= "Modifiminiwindow.js"/>
 	<script src = "RDFparser.js" />
 	<script src = "menuEtiqueta.js" />
 	<script src = "menuValor.js" />
@@ -17,16 +18,19 @@
 	<script src = "Category.js" />
 	<script src = "Attributes.js" />
 	<script src = "Links.js" />
+	<script src = "Draganddrop.js" />
 	<script src = "Browser.js" />
 	<script src = "DiskStorageManager.js" />
 	<script src = "WikiStorageManager.js" />
-	<script src = "Draganddrop.js" />
-	<script src="miniwindow.js"/>
-	<script src="Modifiminiwindow.js"/>
-	<script src="AwarenessManager.js"/>
+	<script src= "AwarenessManager.js"/>
 	<script	src = "l.js"/>
 	<script	src = "configurewindow.js"/>
+	<script src = "Sesamestoragemanager.js"/>
+	<script src = "menuValorSesame.js"/>
+	<script src = "menuEtiquetaSesame.js"/>
+	<script src = "WindowHierarchy.js"/>
 	<script src = "config.js" />
+	<script src = "currentWikiReader.js" />
 	<script src = "Core.js" />
 	<script	src = "funciones.js"/>
 				
@@ -35,6 +39,7 @@
 	      <menuitem id = "borrar" label="&tag.button.del;" oncommand = "borrar(event)"/>
 	  	  <menuitem id = "publicar" label="&tag.button.pub;" oncommand = "publicar(event)"/>
 		  <menuitem id = "navegar" label="&tag.button.nav;" oncommand = "navegar(event)"/>
+		  <menuitem id = "padre" label="&tag.button.fath;" oncommand = "selFather(event)"/>
 	</menupopup>
 	
 	<menupopup>
@@ -42,9 +47,11 @@
 		<menuitem id = "tag.button.del" label="&tag.button.del;" />
 		<menuitem id = "tag.button.pub" label="&tag.button.pub;" />
 		<menuitem id = "tag.button.nav" label="&tag.button.nav;" />
+		<menuitem id = "tag.button.fath" label="&tag.button.fath;" />
 		<menuitem id = "tag.button.cha" label="&tag.button.cha;" />
 		<menuitem id = "cat.add.value" label="&cat.add.value;" />
 		<menuitem id = "cat.mod.value" label="&cat.mod.value;" />
+		<menuitem id = "mess.error.value" label="&mess.error.value;" />
 	</menupopup>
 	
 	<vbox flex="1" id = "all">
@@ -58,7 +65,7 @@
 						
 						<groupbox flex="1">
 															
-							<tree ref="http://www.mySites.com/TOC" id="PersonalTree" flex="1" hidecolumnpicker="true" enableColumnDrag="true" context = "menuTagOne" onselect = "select(event)">
+							<tree ref="http://www.mySites.com/TOC" id="PersonalTree" flex="1" hidecolumnpicker="true" enableColumnDrag="true" context = "menuTagOne" onselect = "select(event,currentIndex)">
 								<treecols>
 									<treecol flex="1" primary="true"
 										maxheight="0" />
@@ -66,7 +73,7 @@
 									<treecol flex="1" label="value" />
 								</treecols>
 								
-								<treechildren class="base" open = "true" container = "true" id = "root" ondrop="clase.onDrop(event)">
+								<treechildren class="base" open = "true" container = "true" id = "root" >
 									<treeitem open="true" container="true">
 										<treerow >
 											<treecell label="&tag.category;" idCont = '1' menu = '0' src = "SistemImages/user-bookmarks24.png" id = 'cat'/>
@@ -77,7 +84,7 @@
 									
 									<treeitem open="true" container="true" >
 										<treerow>
-											<treecell label="&tag.link;" idCont = '2' menu = '0' src = "SistemImages/emblem-symbolic-link16.png" id = 'lin'/>
+											<treecell label="&tag.link;" ondrop="linkDrop()" idCont = '2' menu = '0' src = "SistemImages/emblem-symbolic-link16.png" id = 'lin'/>
 										</treerow>
 																			
 										<treechildren id='2'  yval = '80' id-Tag = 'l'></treechildren>
@@ -111,4 +118,5 @@
 		</hbox>
 		<label/>
 	</vbox>
+	<div id="oculto"></div>
 </page>

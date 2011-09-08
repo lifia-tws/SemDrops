@@ -1,9 +1,7 @@
 /**
- * The Awareness Manager is in charge of comparing the two tags hanging from a particular label
- * so that if the comparison evaluate in onlymy, idisagree, etc, the Awareness Manager can identify 
- * them and put the corresponding icon. It is in charge of comparing the current Wiki tags with the
- * personal annotations so that they can be distinguished from one another, determining which of the
- * tags are personal, which are published, which are deleted, and so on.
+ * El Awareness Manager se encarga de comparar los dos tag's que se encuentran colgando
+ * de una etiqueta en particular. la idea es si las comparaciones evaluan en onlymy, idisagree, etc
+ * poder identificarlas y colocarles el icono correspondiente.
  */
 
 function AwarenessManager()
@@ -23,10 +21,9 @@ function AwarenessManager()
 									}
 								}
 /**
- * This function compares the categories received from the local Wiki with the ones received from the 
- * Wiki visualized  in that moment. Once the wikis are compared,   this function starts the upload 
- * within the semdrops view, determining the awarenes in case of repetition or in case the user disagrees
- * with any component.
+ *  Esta funcion compara las categorias recibidas desde la wiki local con las recibidas desde la wiki visualizada en 
+ *  el momento, una vez comparadas procede a la carga dentro de la vista del semdrops pudiendo asi determinar los 
+ *  awarnes en caso de estar repetidos o en caso de que el usuario este en desacuerdo con algun elemento.
  */	
 	this.compareCategories = function (cat,id,imageid)
 	{
@@ -67,7 +64,7 @@ function AwarenessManager()
 		}
 	}
 /**
- * It works in the same way as the comparecategory. The only difference is that the compare link does it on links.
+ * Realiza el mismo efecto que el comparecategory, la unica diferencia es que el compare link lo hace sobre links
  */	
 	
 	this.compareLinks = function (tag,val,id,imageid)
@@ -113,7 +110,7 @@ function AwarenessManager()
 		}	
 	}
 /**
- * The same as for compare links but working on attributes.
+ * idem compare links solo que lo hace sobre attributes.
  */
 	
 	this.compareAttributes = function (tag,val,id,imageid)
@@ -158,10 +155,9 @@ function AwarenessManager()
 		}	
 	}
 /**
- * It uploads the users data to add them their images and it represents the last object to 
- * recieves vectors value sent to the view.
+ *  Carga los datos del usuario con el fin de poder agregarles a todos sus imagenes, funciona como el ultimo objeto 
+ *  que recibe un valor de vectores y se lo envia a la vista.
  */
-	
 	this.loadUserLinkData = function (tag,val,id,i)
 	{
 		var link = document.getElementById('2');
@@ -192,8 +188,40 @@ function AwarenessManager()
 			linkblacklist += " " +tag[i].toLowerCase()+val[i].substring(++idisagree,val[i].length).toLowerCase();
 		}
 	}
+	
+	
+	this.loadUserAttributeData = function (tag,val,id,i)
+	{
+		var link = document.getElementById('3');
+		var cell = document.createElement('treecell');
+		var attribute = document.createElement('treecell');
+		var items_child = link.childNodes;
+		cell.setAttribute('wikidelobject',tag[i]);
+		tag[i] = tag[i].replace(/¬/gi,"_");
+		cell.setAttribute('label',tag[i]);
+		cell.setAttribute('src',"Awarnessimages/OnlyMine.png");
+		cell.setAttribute('menu','1');
+		attribute.setAttribute('wikidelobject',val[i]);
+		val[i] = val[i].replace(/¬/gi,"_");
+		attribute.setAttribute('label',val[i]);
+		var idisagree = val[i].indexOf("ª");
+		if (idisagree != 9)
+		{
+			var row = document.createElement('treerow');
+			row.appendChild(cell);
+			row.appendChild(attribute);
+			var item = document.createElement('treeitem');
+			item.appendChild(row);
+			link.appendChild(item);
+			core.getattributes().incrementYval();
+		}
+		else
+		{
+			linkblacklist += " " +tag[i].toLowerCase()+val[i].substring(++idisagree,val[i].length).toLowerCase();
+		}
+	}
 /**
- * The same as for loadlinkuserdata but working on categories link.
+ * Idem loadlinkuserdata solo que con el link de categorias.
  */	
 	
 	this.loadCategoriesUserData = function (cat,id)
@@ -205,10 +233,11 @@ function AwarenessManager()
 		cell1.setAttribute('src',"Awarnessimages/OnlyMine.png");
 		var catlabel = document.getElementById('1');
 		cell1.setAttribute('menu','1');
-		var idisagree = cat[1].object.indexOf("ª");
-		if (idisagree != 9)
+		var idisagree = cat[1].object.split("-");
+		if (idisagree[0] != "IDisagree")
 		{
 			var row = document.createElement('treerow');
+			row.setAttribute('id',idisagree[2]);
 			row.appendChild(cell1);
 			var item = document.createElement('treeitem');
 			item.appendChild(row);

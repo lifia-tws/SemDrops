@@ -1,8 +1,3 @@
-/*
- * Pop up with the option related to the tag Value: Add Element.
- */
-
-
 function menuValor ()
 {
 	this.menu = function ()

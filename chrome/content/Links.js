@@ -1,8 +1,3 @@
-/*
- * Functions related to the links tag.
- */
-
-
 function Links ()
 {
 	this.selff;
@@ -16,7 +11,7 @@ function Links ()
 									this.selff = document.getElementById('2');
 									this._label = document.getElementById('lin');
 									this.father = new Label();
-									this._position = 80;
+									this._position = 270;
 								}
 								
 	
@@ -58,8 +53,6 @@ function Links ()
 											var padre = sel.parentNode;
 											var bro = padre.childNodes[1];
 											var delword = bro.getAttribute("wikidelobject");
-											/*delword += 'º';
-											core.deleteFile(delword);*/
 											return delword;
 										}					  
 						  
@@ -68,10 +61,10 @@ function Links ()
 											var cell2 = document.createElement('treecell');
 											cell2.setAttribute('label',value2);
 											value2 += 'º';
-											/* This function stores in disk the value of 
-											 * the second element. 
-											 * As we are now working with wiki-storage, this
-											 * code line remains commented.
+											/* Esta funcion almacena en disco el valor
+											 * del segundo elemento. 
+											 * como ahora estamos trabajando con wiki-storage
+											 * esta linea de codigo permanece comentada.
 											 * 
 											
 												core.loadInDisk(value2,core.selected());
@@ -129,6 +122,11 @@ function Links ()
 								cell2.setAttribute('label',word);
 								treerow.appendChild(cell2);
 								return cont;
+							}
+	
+	this.selFather = function (core)
+							{
+								alert(document.getElementById("mess.error.value").label);	
 							}
 	
 }

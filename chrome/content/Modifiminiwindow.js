@@ -1,7 +1,3 @@
-/*
- * Class in charge of modificating a tag using the “inpuntWindow.xul” interface.
- */
-
 function ModifiMiniwindow () 
 {
 	this._label;

@@ -8,7 +8,10 @@
 <!ENTITY tag.button.cha "Modificar Elemento">
 <!ENTITY tag.button.nav "Navegar">
 <!ENTITY tag.button.pub "Publicar Elemento">
+<!ENTITY tag.button.fath "Seleccionar Padre">
 <!ENTITY cat.add.value "Ingrese el Nombre de la etiqueta: ">
 <!ENTITY cat.mod.value "Ingrese el Nuevo nombre de la etiqueta: ">
 <!ENTITY mod.add.name "Nombre: ">
 <!ENTITY mod.mod.value "Valor: ">
+<!ENTITY tag.col.fathwin "Sujetos">
+<!ENTITY mess.error.value "Esta Funcion esta disponible solo para Categorias">

@@ -1,5 +1,6 @@
 /**
- * Interface between the links miniature window model and the attributes and their controller.
+ * Interface entre el modelo de ventana en miniatura para links y atributos 
+ * y el controlador de los mismos. 
  * @type 
  */
 

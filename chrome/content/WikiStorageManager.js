@@ -1,6 +1,8 @@
 /**
- * In charge of storing all the user´s semantic data within the personal wiki. 
- */
+	El WSM es un almacenador en wikis el mismo se encarga de poder meter todos los 
+	datos personales de un usuario dentro de una wiki que llevara el mismo nombre del
+	user.
+*/
 var _auxdom
 var auxuri;
 var wikiuri;
@@ -22,8 +24,8 @@ function Wikistoragemanager()
 	this._timer;
 	
 /**
- * This function initializes the wiki storage manager object  and obtains the URL of the local 
- * wiki and of that visualized by the user.
+ * Esta funcion inicializa el objeto wiki storage manager, obteniendo el nombre de la wiki local y la visualizada por 
+ * el usuario
  */	
 	this.initialize = function (browser)
 									{
@@ -33,8 +35,8 @@ function Wikistoragemanager()
 										_uriwiki = document.getElementById("wikiname").value+"?title="+document.getElementById("username").value;
 									}
 /**
- * Writes the value presented within the wiki, deriving the value to be uploaded and the url to the 
- * browser object. It uses a template, just like “delete” and “modify” not to repeat the code.
+ * Escribe el valor presentado dentro de la wiki, derivandole el valor a cargar y la url al objeto BROWSER
+ * usa un template al igual que dellete y modifi para no repetir codigo.
  */	
 	this.write = function (value,attribute,idlabel)
 									{
@@ -48,25 +50,27 @@ function Wikistoragemanager()
 										_awarenes = _awa;	
 									}		
 									
-	/* It is written with “ll” because “delete” is a word that is reserved by JS */
-	this.dellete = function (value,attribute)
+	/*Esta con dos ll poruqe delete es una palabra reservada por JS*/
+	this.dellete = function (value,attribute,idlabel)
 									{
 										_value = value;
 										_attribute = attribute;
+										_idlabel = idlabel;
 										templateWikiFunction(functiondel);
 									}
 									
-	this.modifi = function (value,attribute,newvalue,newattribute)
+	this.modifi = function (value,attribute,newvalue,newattribute,idlabel)
 									{
 										_value = value;
 										_attribute = attribute;
 										_newvalue = newvalue;
 										_newattribute = newattribute;
+										_idlabel = idlabel;
 										templateWikiFunction(functionmod);
 									}
 	/**
-	 * t publishes the value of the element selected in the wiki visualized by the browser. For this,
-	 * it obtains the values to be loaded and derives it to the browser.
+	 * publica el valor del elemento seleccionado en la wiki que actualmente esta visualizando el browser.
+	 * para ello obtiene el valor a cargar y se lo deriba al browser.
 	 */
 	this.publish = function (core,labelid)
 									{
@@ -96,28 +100,18 @@ function Wikistoragemanager()
 	this.readUserData = function ()
 					{
 						rdf = new RDF();
-						var url = document.getElementById("wikiname").getAttribute('value')+"/Special:ExportRDF/"+document.getElementById("username").getAttribute('value')+"-"+_browser.getActualUri()+"wikistorage";
+						var url = document.getElementById("wikiname").getAttribute('value')+"/Special:ExportRDF/"+document.getElementById("username").getAttribute('value')+_browser.getActualUri()+"wikistorage";
 						id = 1;
-						var xmlreq = xmlhttp = new XMLHttpRequest();
-						xmlreq.onreadystatechange = function ()
-						{
-							if (xmlreq.readyState == 4)
-							{
-								rdf.getRDFURL(url,callbackUserData);
-							}
-						};
-						xmlreq.open("GET",url,true);
-						xmlreq.send(null);
+						$.get(url,function (){rdf.getRDFURL(url,callbackUserData);})
+						 .error(function() { alert("Hubo un problema en la conexion, lo sentimos");});
 					}
 }
 
-/* 
- * Functions not in accord with the wikistoragemanager object. The object can see and use them 
- * but they are not available for other objects.
- */
+// FUNCIONES AJENAS AL OBJETO WIKISTORAGEMANAGER, EL OBJETO LAS PUEDE VER Y USAR Y NO ESTAN DISPONIBLES PARA LOS DEMAS
+// OBJETOS.
 
 /**
- * This function waits for 1-second-delay and then refreshes the Semdrops.
+ * esta funcion espera un delay de 1 segundo y refresca el semdrops
  */
 function returnToPage()
 {
@@ -125,157 +119,164 @@ function returnToPage()
 	_timer.initWithCallback(event,1000,Components.interfaces.nsITimer.TYPE_ONE_SHOT);
 }
 /**
- *  This function is used within the template and indicates the browser that it must add an element to the Wiki.
+ *  Esta funcion se usa dentro del template y le dice al browser que debe agregar un elemento a la wiki.
  */
-function functionadd()
+function functionadd(wikidata)
 {
-	_browser.addInUserSpace(_value,_attribute,_idlabel,auxuri,_auxdom);
+	if(_idlabel == 1)
+	{	
+		_value = _value.toLowerCase();
+		return (wikidata+"[[Category::"+_value+"]]");
+	}
+	else
+		if(_idlabel == 2)
+		{
+			_value = _value.toLowerCase();
+			_attribute = _attribute.toLowerCase();
+			return (wikidata+"[["+_value+"::"+_attribute+"]]");
+		}	
+		else
+		{
+			_value = _value.toLowerCase();
+			_attribute = _attribute.toLowerCase();
+			return (wikidata+"[["+_value+":="+_attribute+"]]");
+		}
 }
 /**
- * The same as for “functionadd” just that it delets instead of adding.
+ * Idem funcionadd pero borra en lugar de agregar.
  */
-function functiondel()
+function functiondel(wikidata)
 {
-	_browser.delInUserSpace(_value,_attribute,auxuri,_auxdom);
+	if (_idlabel == 1)
+	{
+		_value = _value.toLowerCase();
+		wikidata = wikidata.replace("[[Category::IDisagreeª"+_value+"]]"," ");
+		wikidata = wikidata.replace("[[Category::"+_value+"]]","[[Category::IDisagreeª"+_value+"]]");
+	}
+	else
+	{
+		_value = _value.toLowerCase();
+		_attribute = _attribute.toLowerCase();
+		wikidata = wikidata.replace("[["+_value+"::IDisagreeª"+_attribute+"]]"," ");
+		wikidata = wikidata.replace("[["+_value+"::"+_attribute+"]]","[["+_value+":=IDisagreeª"+_attribute+"]]");
+		wikidata = wikidata.replace("[["+_value+":=IDisagreeª"+_attribute+"]]"," ");
+		wikidata = wikidata.replace("[["+_value+":="+_attribute+"]]","[["+_value+":=IDisagreeª"+_attribute+"]]");
+	}
+	return wikidata;
 }
 /**
- * The same as for “functionadd” just that it modifies instead of adding.
+ * Idem funcionadd pero modifica en lugar de agregar.
  */
-function functionmod()
+function functionmod(wikidata)
 {
-	_browser.modInUserSpace(_value,_attribute,_newvalue,_newattribute,auxuri,_auxdom);
+	if (_idlabel == 1)
+	{
+		_value = _value.toLowerCase();
+		_newvalue = _newvalue.toLowerCase();
+		wikidata = wikidata.replace("[[Category::"+_value+"]]","[[Category::"+_newvalue+"]]");
+	}
+	else
+	{
+		_value = _value.toLowerCase();
+		_newvalue = _newvalue.toLowerCase();
+		_attribute = _attribute.toLowerCase();
+		_newattribute = _newattribute.toLowerCase();
+		wikidata = wikidata.replace("[["+_value+"::"+_attribute+"]]","[["+_newvalue+"::"+_newattribute+"]]");
+		wikidata = wikidata.replace("[["+_value+":="+_attribute+"]]","[["+_newvalue+":="+_newattribute+"]]");
+	}
+	return (wikidata);
 }
 
 /**
- * Template method so that the code is not repeated unnecessarily. The “fun” variable is a function
- * that is executed according to its corresponding, when a value was added, deleted or modified.
+ * Template method para no repetir codigo sin necesidad... la var "fun" es una 
+ * function que se ejecuta para su correspondiente ya sea si se agrogo, borro 
+ * o modifico un valor.
  */
+var url;
 
 function templateWikiFunction(fun)
 {
-	document.onmousedown = null;
-	document.onmousemove = null;
-	auxuri = _browser.getActualUri();
-	wikiuri = _uriwiki +"-"+ auxuri+"wikistorage" + "&action=edit";
-	_auxdom = window.open(wikiuri,' ','width=1,height=1,top=1,left=1');
+	var subject = escape(_browser.getActualUri());
+	url = _uriwiki+subject+"wikistorage";
 	var xmlreq = createXMLHTTPobject();
 	xmlreq.onreadystatechange = function ()
 	{
 		if (xmlreq.readyState == 4)
 		{
-			fun();
-			var event = { notify : function(timer) {returnToPage();}}
-			_timer.initWithCallback(event,1000,Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+			var dom = xmlreq.responseXML;
+			var editform = dom.documentElement.getElementsByTagName("form")[0];
+			createPostMessage(editform.childNodes,fun);
 		}
 	}
-	xmlreq.open("GET",wikiuri);
+	xmlreq.open("GET",url+"&action=edit","true");
 	xmlreq.send(null);
 }
 
+function createPostMessage(form,fun)
+{
+	var starttime = form[2].getAttribute("value");
+	var edittime = form[4].getAttribute("value");
+	var autosummary = form[8].getAttribute("value");
+	if(form[10].childNodes[0] == null)
+	{
+		var nam = fun("");
+	}
+	else
+	{
+		var nam = fun(form[10].childNodes[0].data);
+	}
+	var save = "Save Page";
+	var edittoken = form[16].getAttribute("value");
+	url = url+"&action=submit";
+	$.post(url,{wpSection:"",wpStarttime:starttime,wpEdittime:edittime,wpScrolltop:"0",wpAutoSummary:autosummary,oldid:"0",wpTextbox1:nam,wpSummary:"",wpSave: save, wpEditToken: edittoken},function (data){response(data);});
+}
+
+function response(data)
+{
+	window.location.reload();
+}
 
 function callbackUserData()
 {
-	var subject =rdf.Match(null,null,null,null);
-	var subject_array = rdf.Match(null,subject[3].subject,null,null);
-	
-	crosspage = rdf.Match(null,subject[3].subject,"http://www.w3.org/2002/07/owl#sameAs",null);
-		
-	var atrib1;
-	loadCategoryTagUserData(subject[3].subject,subject[3].predicate);
-	
-	var rdfTags = new Array(subject_array.lenght);
-	var rdfValues = new Array(subject_array.lenght);
-	
-	var rdfTags = new Array(subject_array.lenght);
-	var rdfValues = new Array(subject_array.lenght);
-	
-	for (i=0;i<subject_array.length;i++)
+	var wikiname = document.getElementById("wikiname").value;
+	var all = rdf.Match(null,null,null,null);
+	for (var i=0;i < all.length;i++)
 	{
-		rdfTags[i] = '';
-		rdfValues[i] = '';
-		atrib1 = rdf.Match(null,subject_array[i].predicate,null,null);
-		if (atrib1 != '') 
+		var word = all[i].predicate.split(wikiname+"/Special:URIResolver/Property-3A");
+		if (word[0] == "")
 		{
-			atrib2 = rdf.Match(null,atrib1[0].subject,'http://www.w3.org/2000/01/rdf-schema#label',null);
-			if (atrib2 != '')
+			if(word[1] == "Category")
 			{
-				rdfTags[i] = atrib2[0].object;
-				if (subject_array[i].object[5] != '/' && subject_array[i].object[6] != '/')
-				{
-					rdfValues[i] = subject_array[i].object;
-				}
-				else
-				{
-					var atrib3 = rdf.Match(null,subject_array[i].object,null,null);
-					rdfValues[i] =atrib3[1].object;
-				}
+				loadCategoryTagUserData(all[i].object);
 			}
-		}
-	}
-	loadUserTagLink(rdfTags,rdfValues);
-}
-
-function loadCategoryTagUserData(subject,predicate)
-{
-	var subject_array = rdf.Match(null,subject,predicate,null);
-	var cat_array = new Array(subject_array.length);
-	for (i=0;i<subject_array.length;i++)
-	{
-		var cat = rdf.Match(null,subject_array[i].object,null,null);
-		var cat = rdf.Match(null,subject_array[i].object,null,null);
-		if (cat != '' && cat[1].object[5] != '/' && cat[1].object[6] != '/')
-		{
-			_awarenes.loadCategoriesUserData(cat,id);
-		}
+			else
+			{
+				loadUserTagLink(word[1],all[i].object.split(wikiname+"/Special:URIResolver/")[1]);
+			}	
+		}	
 	}
 }
-
-var name = '';
 
 /**
- * The loadWikiData is a function that reads the elements from the Wiki visualized by the browser,
- * uploading the data in the view of the semdrops. 
+ *  Carga el valor de los elemntos leidos en la wiki con dentro del semdrops.
  */
-function loadWikiData(browser)
+var path;
+
+function loadUserTagLink(linkword, attributeword)
 {
-	rdf = new RDF();
-	crossCant = 10;
-	var url = browser.getActualUri();
-	var cont=-1;
-	var url_firstpart='';
-	
-	if (url != "about:blank")
-	{
-		for (var i=url.length; url[i] != "/" || i <= 0;i--)
-		{
-			cont++;	
-		}
-		for (var i=0;i<(url.length - cont);i++)
-		{
-			url_firstpart += url[i];
-		}
-		for (var j=0;j < (url.length - url_firstpart.length);j++)
-		{
-			name += url[j+url_firstpart.length];
-		}
-		var RDFurl = url_firstpart+'Special:ExportRDF/'+name;
-		id = 0;
-		
-		var xmlreq = xmlhttp = new XMLHttpRequest();
-		xmlreq.onreadystatechange = function ()
-		{
-			if (xmlreq.status != 200)
-			{
-				if (cantidad != 0){cantidad=0;delayOfCrossWikiData();}
-			}	
-			if (xmlreq.readyState == 4 && xmlreq.status == 200)
-			{
-				rdf.getRDFURL(RDFurl,callback);
-			}
-		};
-		xmlreq.open("GET",RDFurl,true);
-		xmlreq.send(null);
-	}
+	var link = new Array(2);
+	var attribute = new Array(2);
+	link[0] = linkword;
+	attribute[0] = attributeword;
+	_awarenes.loadUserLinkData(link,attribute,0,0);
+}
+
+function loadCategoryTagUserData(cat)
+{
+	var triple = new Array(2);
+	triple[1] = new Triples();
+	triple[1].object = cat.split("Special:URIResolver/")[1];;
+	_awarenes.loadCategoriesUserData(triple," ",0);
 }
 
 function delayOfCrossWikiData()
@@ -288,7 +289,7 @@ function delayOfCrossWikiData()
 function loadCrossWikiData(browser,cross_cont)
 {
 	rdf = new RDF();
-	// This line uses the first of the “RELATIVE URLs, but it has to be changed for the cross_cont variable.
+	// ESTA LINEA USA EL PRIMERO DE LOS "RELATIVE URL" PARA DESPUES HAY QUE CAMBIARLO POR LA VARIABLE CROSS_CONT
 	var url = crosspage[cross_cont].object;
 	var cont=-1;
 	var url_firstpart='';
@@ -326,12 +327,7 @@ function loadCrossWikiData(browser,cross_cont)
 }
 
 /**
- * The readWikiUserData Works in the same way that the loadWikiData. The only difference is that instead 
- * of working from the Wiki visualized in that moment, it does it from the Wiki setted by the user.
- */
-
-/**
- * It uploads the attribute and the links values in the semdrop view.
+ * Carga los valores de los atributos y de los links en la vista del semdrop.
  */
 function cargarAlTagAttributeAndLink(attritag,attrival,linktag,linkval)
 {
@@ -353,24 +349,8 @@ function cargarAlTagAttributeAndLink(attritag,attrival,linktag,linkval)
 }
 
 /**
- *  It uploads the value of the elements read on the Wiki in the semdrops.
- */
-
-function loadUserTagLink(tag,val)
-{
-	for(i=0;i < val.length;i++)
-	{
-		if (val[i] != '')
-		{
-			_awarenes.loadUserLinkData(tag,val,id,i);
-		}
-	}
-	loadWikiData(browser);
-}
-
-/**
- * This function is triggered when the RDFparser is created. Once the object is created, this
- * function is triggered to obtain all the elements from the RDF of the Wiki visualized in that moment.
+ * Esta funcion se dispara cuando se crea el RDFparser, una vez el objeto es creado dispara esta funcion con el 
+ * objetivo de poder obtener todos los elementos del RDF de la wiki visualizada por en el momento.
  */
 function callback()
 {
@@ -419,14 +399,13 @@ function callback()
 		}
 }
 /**
- * The same as for “callback” but in this case it is executed on the user´s personal Wiki.
+ * Idem callback pero a diferencia esta se ejecuta sobre la wiki personal del usuario.
  */
 
 /**
- * This function uploads all the elements that have been extracted from the RDF and send them
- * to the AWARNESSMANAGER object where the elements are compared between each other and with the
- * elements of the Wiki visualized by the browser which are therefor sent to the view so that 
- * the user can visualize them.
+ * esta funcion carga todos los elementos extraidos del RDF y se los envia al objeto AWARNESSMANAGER, el cual los 
+ * compara entre si con los elementos de la wiki visualizada por el browser y se los envia a la vista para que el 
+ * usuario pueda visualizarlos.
  */
 function categoria(subject,predicate)
 {
@@ -445,7 +424,7 @@ function categoria(subject,predicate)
 
 
 /**
- * Since the “request” is not a standard of the w3c, it is used to create an xmlhttprequest object.
+ * como el request no es un estandar de la w3c se utiliza esta funcion para poder crear un objeto xmlhttprequest
  */
 
 function createXMLHTTPobject() {

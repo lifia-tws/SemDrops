@@ -1,7 +1,7 @@
 /**
- * This class is in charge of running the storage of all data related to the web pages and the 
- * data delivered by the user.
- * This class will be considered obsolete when teh storage is in wikis.
+ * Esta clase se encarga de manejar todos los almacenamientos en disco de todos los 
+ * datos referidos a las paginas webs y a los datos entregados por el usuario
+ * cunado los usuarios se manejen con wikis la idea es eliminar esta clase.
  */
 
 function DiskStorageManager()
@@ -18,27 +18,35 @@ function DiskStorageManager()
 									
 	this.createTable = function()
 									{
-										if (!_DBConn.tableExists("userdata"))
+										if (!_DBConn.tableExists("UserTableData"))
 										{
-											_DBConn.executeSimpleSQL("CREATE TABLE userdata (username STRING[50] ,userwiki STRING[100])");
+											_DBConn.executeSimpleSQL("CREATE TABLE UserTableData (username STRING[50] ,userwiki STRING[100], userstma STRING[50])");
 										}
 									}
 									
-	this.loadInDB = function (name,wiki)
+	this.loadInDB = function (name,wiki,sman)
 									{
-										_DBConn.executeSimpleSQL("INSERT INTO userdata VALUES('"+name+"','"+wiki+"')");
+										_DBConn.executeSimpleSQL("INSERT INTO UserTableData VALUES('"+name+"','"+wiki+"','"+sman+"')");
 									}
 									
 	this.readInDB = function ()
 									{
-										if (_DBConn.tableExists("userdata"))
+										if (_DBConn.tableExists("UserTableData"))
 										{
-											var statement = _DBConn.createStatement("SELECT * FROM userdata");
+											var statement = _DBConn.createStatement("SELECT * FROM UserTableData");
 											while (statement.executeStep()) 
 											{  
 										      document.getElementById('username').setAttribute('value',statement.row.username);
 										      document.getElementById('wikiname').setAttribute('value',statement.row.userwiki);
-										    }
+										      if(statement.row.userstma == "Sesame")
+										      {
+										    	  core.setRemoteStorage(new Sesamestoragemanager());
+										      }  
+										      else
+										      {
+										    	  core.setRemoteStorage(new Wikistoragemanager());
+										      }
+											}
 										}    
 									}
 }

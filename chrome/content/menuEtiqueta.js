@@ -1,7 +1,3 @@
-/*
- * Pop up with options related to the tag Label: Delete Element, Modify Element, Publish Element and Browse.
- */
-
 function menuEtiqueta()
 {
 	this.menu = function ()
@@ -20,7 +16,7 @@ function menuEtiqueta()
 								MENU.removeChild(BOR);		
 								MENU.removeChild(MOD);	
 								MENU.removeChild(PUB);	
-								MENU.removeChild(NAV);	
+								MENU.removeChild(NAV);
 								MENU.appendChild(AGR);
 							}
 

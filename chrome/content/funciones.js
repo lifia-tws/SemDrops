@@ -1,6 +1,7 @@
 /**
- * Parcing which mediates between all the main .XUL functions (emptysidebar.xul) and
- * the Core.js class, in charge of communicating the different elements of the system.
+ * Parceador intermediario entre todas las funciones del .XUL principal (emptysidebar.xul)
+ * y la clase Core.js que es la encargada de comunicar los distintos elementos del 
+ * sistema.
  */
 
 var CANT = 2;
@@ -8,18 +9,17 @@ var CANTVAL = 1;
 var ETIQUETAS = 4;
 var core;
 var mw;
+var fatherwin;
 
 function onLoad(event)
 {
-	//document.onmousedown = refreshPageSelected;
-	document.onmousemove = comparar;
-	
 	var chromeURL = location;
 	var crs = Components.classes['@mozilla.org/chrome/chrome-registry;1'].getService(Components.interfaces.nsIChromeRegistry);
 	var ios = Components.classes['@mozilla.org/network/io-service;1'].getService(Components.interfaces.nsIIOService);
 	var nsIURI = ios.newURI(decodeURI(chromeURL), 'UTF-8', null);
 	var fileURL = crs.convertChromeURL(nsIURI).spec; 
 	mw = new Miniwindow();
+	fatherwin = new WindowHierarchy()
 	modw = new ModifiMiniwindow();
 	
 	core = new Core(_local_store_manager,_browser_interface, _remote_storage_manager,_awarenes_manager);
@@ -45,9 +45,9 @@ function borrar(event)
 	core.borrar();
 }
    
-function select(event)
+function select(event,currentIndex)
 {
-	core.select(event);
+	core.select(event,currentIndex);
 }
 
 function publicar(event)
@@ -58,6 +58,11 @@ function publicar(event)
 function refreshPageSelected(event)
 {
 	//core.refreshPageSelected(event);
+}
+
+function selFather(event)
+{
+	core.selFather();
 }
 
 function comparar()
@@ -73,4 +78,9 @@ function configure()
 function navegar()
 {
 	core.navigate();
+}
+
+function linkDrop()
+{
+	alert("link");
 }

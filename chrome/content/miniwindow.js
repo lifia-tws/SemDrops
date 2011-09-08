@@ -1,7 +1,7 @@
 /**
- * Model corresponding to the modification window of different Attributes or links.
+ * Modelo que se corresponde a la ventana de modificacion de los distintos Attributes 
+ * o Links
  */
-
 
 function Miniwindow () 
 {
@@ -11,7 +11,7 @@ function Miniwindow ()
 	
 	this.initialize = function (valor1,valor2,label,fun)
 	{
-		var win = window.open('inputWindow.xul','Semdrops','width=380,height=150,top=300,left=400');
+		var win = window.open('chrome://emptysidebar/content/inputWindow.xul','Semdrops','width=380,height=150,top=300,left=400');
 		this.value1 = valor1;
 		this.value2 = valor2;
 		this._label = label;

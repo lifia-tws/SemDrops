@@ -1,7 +1,6 @@
 /**
- * It contains information about the browser and is in charge, among other things, 
- * of refreshing and updating the web pages and of  returning the URL to where the 
- * user currently is.
+ * Esta clase contiene informacion sobre el navegador, se encarga de refrescar las 
+ * paginas y de actualizar como de devolver la URL donde me encuentro actualmente.
  */
 
 function Browser()
@@ -19,11 +18,16 @@ function Browser()
 										var windowManagerInterface = windowManager.QueryInterface( Components.interfaces.nsIWindowMediator);	
 										_interface = ( windowManagerInterface.getMostRecentWindow( "navigator:browser" ) ).getBrowser();
 										_localDom = ( windowManagerInterface.getMostRecentWindow( "navigator:browser" ) ).window;
-										for (var i=1;i<_localDom.length;i++) 
-										{
-											_localDom[i].document.onmousemove = compare;
-											_localDom[i].document.focus = compare;
-										}
+										var mainWindow = window.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+										                       .getInterface(Components.interfaces.nsIWebNavigation)
+										                       .QueryInterface(Components.interfaces.nsIDocShellTreeItem)
+										                       .rootTreeItem
+										                       .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+										                       .getInterface(Components.interfaces.nsIDOMWindow);
+										var container = mainWindow.gBrowser.tabContainer;
+										container.addEventListener("TabSelect", compare, true);
+										container.addEventListener("TabAttrModified", compare, true);
+										mainWindow.addEventListener("dragend",DragandDropManager.ondrop,true);
 										_actualUri = _interface.currentURI.asciiSpec;
 									}
 							
@@ -64,7 +68,8 @@ function Browser()
 	this.publish = function(core,labelid)
 	{
 		/**
-		*  New process in which the Textbox is uploaded with the Drag and Drop reversed.
+		*  Proceso Nuevo donde cargo el Textbox 
+		*  con el Drag and Drop inverso
 		*/
 		this.disablemouseoption();
 		for (var i=1;i<_localDom.length;i++)
@@ -91,7 +96,7 @@ function Browser()
 		_timer.initWithCallback(event,1000,Components.interfaces.nsITimer.TYPE_ONE_SHOT);
 	}
 	
-	this.addInUserSpace = function(value,attribute,idlabel,auxuri,auxdom)
+	/*this.addInUserSpace = function(value,attribute,idlabel,auxuri,auxdom)
 	{
 		this.disablemouseoption();
 		var j = _auxdom.wrappedJSObject.document.forms["editform"];
@@ -128,13 +133,14 @@ function Browser()
 			_auxdom.wrappedJSObject.document.forms["editform"].submit();
 			_auxdom.close();
 		}
-	}
+	}*/
 	
-	this.delInUserSpace = function(value,attribute,auxuri,auxdom)
+	/*this.delInUserSpace = function(value,attribute,auxuri,auxdom)
 	{
 		/**
-		 * It reads a whole string from the texbox and deletes the selected word.
-		 */
+		* 	Lee desde el "texbox" todo un string y elimina la palabra que  
+		*   deseada.
+		*
 		this.disablemouseoption();
 		var j = _auxdom.wrappedJSObject.document.forms["editform"];
 		if (j == "[object HTMLFormElement]")
@@ -160,13 +166,14 @@ function Browser()
 			_auxdom.wrappedJSObject.document.forms["editform"].submit();
 			_auxdom.close();
 		}
-	}
+	}*/
 	
 	this.modInUserSpace = function(value,attribute,newvalue,newattribute,auxuri,auxdom)
 	{
 		/**
-		 * It reads a whole string from the texbox and modifies the selected word.
-		 */
+		* 	Lee desde el "texbox" todo un string y modifica la palabra que  
+		*   deseada.
+		*/
 		
 		var j = _auxdom.wrappedJSObject.document.forms["editform"];
 		if (j == "[object HTMLFormElement]")
